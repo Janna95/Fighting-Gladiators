@@ -81,14 +81,15 @@ function stopGame(arr, index) {
         console.log(arr.length);
 
         if (arr.length === 1) {
+            arr[0].stopHitting();
             return console.log(`---> [${arr[0].name}] won the battle with health x${arr[0].health}`);  
         }
-        continueGame (arr);
+        continueGame(arr);
     } 
     else {
         arr[index].health += 50;
         console.log("---> Caesar decided that " + arr[index].name + " will continue with health " + arr[index].health);
-        continueGame (arr); 
+        continueGame(arr); 
     }     
 }
 

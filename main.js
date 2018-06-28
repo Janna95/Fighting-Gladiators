@@ -16,7 +16,6 @@ class Gladiator {
         for (let gladiator of arr) {
             if (gladiator.name === this.name) {
                 ownIndex = arr.indexOf(gladiator);
-                console.log(ownIndex)
             }
         }
         this.interval = setInterval(() => {
@@ -47,7 +46,6 @@ function createGladiatorArr(size) {
         let gladiator = new Gladiator(health(), power(), speed(), name());
         glArr.push(gladiator);
     }
-    console.log(glArr);
     return glArr;
 } 
 
@@ -85,16 +83,12 @@ function stopGame(arr, index) {
         if (arr.length === 1) {
             return console.log(`---> [${arr[0].name}] won the battle with health x${arr[0].health}`);  
         }
-        arr.forEach((gl) => {
-            gl.continueHitting(arr);
-        });
+        continueGame (arr);
     } 
     else {
         arr[index].health += 50;
         console.log("---> Caesar decided that " + arr[index].name + " will continue with health " + arr[index].health);
-        arr.forEach((gl) => {
-            gl.continueHitting(arr);
-        });  
+        continueGame (arr); 
     }     
 }
 
@@ -105,14 +99,9 @@ function stopInterval(arr) {
 }
 
 function continueGame (arr) {
-    if (arr.length === 1) {
-        console.log(`[${arr[0].name}] won the battle with health x${arr[0].health}`)
-    }
-    else {
         arr.forEach((gl) => {
             gl.continueHitting(arr);
         });
-    }
 }
 
 function caesar() {

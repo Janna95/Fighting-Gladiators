@@ -10,15 +10,21 @@ class Gladiator {
         this.initial_speed = speed;
         this.speed = speed;
     }
-    
     attackTo (arr) {
         let miliseconds;
+        let ownIndex;
+        for (let gladiator of arr) {
+            if (gladiator.name === this.name) {
+                ownIndex = arr.indexOf(gladiator);
+                console.log(ownIndex)
+            }
+        }
         this.interval = setInterval(() => {
-            miliseconds = 1000 * (this.initial_speed)/(this.speed);
-            //decides opponent
+            miliseconds = 1000 * 5/(arr[ownIndex].speed);
+            
             let random_index = Math.floor(Math.random() * arr.length);
             let opponent = arr[random_index];
-            //attecks
+           
             hit.call(this, arr, opponent);
         }, miliseconds)    
     }  
@@ -41,6 +47,7 @@ function createGladiatorArr(size) {
         let gladiator = new Gladiator(health(), power(), speed(), name());
         glArr.push(gladiator);
     }
+    console.log(glArr);
     return glArr;
 } 
 
@@ -63,7 +70,7 @@ function hit(arr, opponent) {
     else if (opponent.health <= 0) stopGame(arr, arr.indexOf(opponent));
 }
 
-function stopGame (arr, index) {
+function stopGame(arr, index) {
 
     stopInterval(arr);
     console.log( "***The Game Is Stopped***");
@@ -113,3 +120,4 @@ function caesar() {
 }
 
 start(7);
+

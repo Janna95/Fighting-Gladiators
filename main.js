@@ -1,4 +1,13 @@
-var faker = require('./faker.js');
+//var faker = require('./faker.js');
+ 
+const players = document.getElementById("players");
+const number = document.getElementById("number");
+
+function begin() {
+  start(number.value);
+  document.getElementById("pic").style = "display: block";
+
+}
 
 class Gladiator {
     constructor(health, power, speed, name) {
@@ -8,27 +17,23 @@ class Gladiator {
         this.initial_power = power;
         this.power = power;
         this.initial_speed = speed;
-        this.speed = speed;
+        this.speed = this.initial_speed * (this.health/this.initial_health);   
     }
     attackTo (arr) {
-        let miliseconds;
-        let ownIndex;
-        for (let gladiator of arr) {
-            if (gladiator.name === this.name) {
-                ownIndex = arr.indexOf(gladiator);
-            }
-        }
-        this.interval = setInterval(() => {
-            miliseconds = 1000 * 5/(arr[ownIndex].speed);
-            
-            let random_index = Math.floor(Math.random() * arr.length);
-            let opponent = arr[random_index];
+        let miliseconds = 5000 / this.speed;
+        let timeOut;
+        let filteredArr = arr.filter((gladiator) => { 
+            return gladiator.name != this.name;
+        });
+        timeOut = setTimeout(() => {
+            let random_index = Math.floor(Math.random() * filteredArr.length);
+            let opponent = filteredArr[random_index];
            
             hit.call(this, arr, opponent);
-        }, miliseconds)    
-    }  
+        }, miliseconds);
+    } 
     stopHitting () {
-        clearInterval(this.interval)
+        clearTimeout(this.timeout)
     }
     continueHitting (arr) {
         this.attackTo(arr);
@@ -58,56 +63,64 @@ function start(size) {
 
 function hit(arr, opponent) {
 
-    opponent.health -= this.power;
-    console.log(`[${this.name} x ${this.health}] hits [${opponent.name} x ${opponent.health}] with power ${this.power}`);
-    opponent.speed = opponent.initial_speed * ((opponent.health) / (opponent.initial_health));
+    if(arr.length > 1) {
+        
+        players.innerHTML +=`<p class="list-group-item list-group-item-light p-1" >[${this.name} x ${Math.round(this.health)}] hits [${opponent.name} x ${Math.round(opponent.health)}] with power ${this.power}</p>`
 
-    if (opponent.health >= 15 && opponent.health <= 30) {
-        opponent.speed * 3;
+        // console.log(`[${this.name} x ${Math.round(this.health)}] hits` +
+        //  ` [${opponent.name} x ${Math.round(opponent.health)}] with power ${this.power}`);
+
+        opponent.health -= this.power;
+        if (opponent.health >= 15 && opponent.health <= 30) {
+            opponent.speed * 3;
+        }
+        else if (opponent.health <= 0) {
+
+            return stopGame(arr, opponent)
+        }
+        continueGame(arr);
     }
-    else if (opponent.health <= 0) stopGame(arr, arr.indexOf(opponent));
 }
 
-function stopGame(arr, index) {
-
-    stopInterval(arr);
+function stopGame(arr, opponent) {
+    stopTimeOut(arr);
     console.log( "***The Game Is Stopped***");
-
     let decision = caesar();
 
     if (decision === 0) {
-        console.log(`---> [${arr[index].name}] is dead`);
-        arr.splice(index, 1);
-        console.log(arr.length);
+        players.innerHTML += `<p class="list-group-item list-group-item-danger p-2"> [${opponent.name}] is dead`;
+        // console.log(`---> [${opponent.name}] is dead`);
+        arr.splice(arr.indexOf(opponent), 1);
+        // console.log(arr.length);
 
         if (arr.length === 1) {
-            arr[0].stopHitting();
-            return console.log(`---> [${arr[0].name}] won the battle with health x${arr[0].health}`);  
+            players.innerHTML += `<p class="list-group-item list-group-item-success p-2">[${arr[0].name}] won the battle with health x${arr[0].health}</p>`;
+            // return console.log(`---> [${arr[0].name}] won the battle with health x${arr[0].health}`);  
+            return;
         }
-        continueGame(arr);
     } 
     else {
-        arr[index].health += 50;
-        console.log("---> Caesar decided that " + arr[index].name + " will continue with health " + arr[index].health);
-        continueGame(arr); 
-    }     
+        opponent.health += 50;
+        players.innerHTML += '<p class="list-group-item list-group-item-warning p-2">Caesar decided that [' + 
+            opponent.name + '] will continue with health ' + Math.round(opponent.health) +"</p>";
+        // console.log("---> Caesar decided that " + opponent.name + " will continue with health " + Math.round(opponent.health));
+    }
+    continueGame(arr); 
 }
 
-function stopInterval(arr) {
+function stopTimeOut(arr) {
     arr.forEach(gl => {
         gl.stopHitting();   
     });
 }
 
 function continueGame (arr) {
-        arr.forEach((gl) => {
-            gl.continueHitting(arr);
-        });
+    arr.forEach((gl) => {
+        gl.continueHitting(arr);
+    });
 }
 
 function caesar() {
     return Math.round(Math.random());
 }
-
-start(7);
 

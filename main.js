@@ -8,7 +8,6 @@ function begin() {
   document.getElementById("pic").style = "display: block";
 
 }
-
 class Gladiator {
     constructor(health, power, speed, name) {
         this.name = name;
